@@ -102,8 +102,116 @@ class SortingAlgorithms {
     quick(array, 0, array.length - 1, compareFn)
     return swaps
   }
+
+
+  mergeSort(array) {
+  const operations = []
+
+  function merge(arr, left, mid, right) {
+    const leftArr = arr.slice(left, mid + 1)
+    const rightArr = arr.slice(mid + 1, right + 1)
+
+    let i = 0, j = 0, k = left
+
+    while (i < leftArr.length && j < rightArr.length) {
+      
+      operations.push({ 
+        type: "compare", 
+        indices: [left + i, mid + 1 + j] 
+      })
+
+      if (leftArr[i] <= rightArr[j]) {
+        arr[k] = leftArr[i]
+        operations.push({
+          type: "overwrite",
+          index: k,
+          value: leftArr[i]
+        })
+        i++
+      } else {
+        arr[k] = rightArr[j]
+        operations.push({
+          type: "overwrite",
+          index: k,
+          value: rightArr[j]
+        })
+        j++
+      }
+      k++
+    }
+
+    
+    while (i < leftArr.length) {
+      arr[k] = leftArr[i]
+      operations.push({
+        type: "overwrite",
+        index: k,
+        value: leftArr[i]
+      })
+      i++
+      k++
+    }
+
+    
+    while (j < rightArr.length) {
+      arr[k] = rightArr[j]
+      operations.push({
+        type: "overwrite",
+        index: k,
+        value: rightArr[j]
+      })
+      j++
+      k++
+    }
+  }
+
+  function mergeSortHelper(arr, left, right) {
+    if (left >= right) return
+
+    const mid = Math.floor((left + right) / 2)
+
+    mergeSortHelper(arr, left, mid)
+    mergeSortHelper(arr, mid + 1, right)
+    merge(arr, left, mid, right)
+  }
+
+  mergeSortHelper(array, 0, array.length - 1)
+  return operations
+}
+insertionSort(array) {
+  const swaps = []
+
+  for (let i = 1; i < array.length; i++) {
+    let key = array[i]
+    let j = i - 1
+
+    // Shift elements greater than key to the right
+    while (j >= 0 && array[j] > key) {
+      array[j + 1] = array[j]
+
+      // Log this as a "swap-like" movement
+      swaps.push({
+        firstPosition: j,
+        lastPosition: j + 1
+      })
+
+      j--
+    }
+
+    array[j + 1] = key
+
+    // Log the insertion (placing key back)
+    swaps.push({
+      firstPosition: i,
+      lastPosition: j + 1
+    })
+  }
+
+  return swaps
 }
 
+
+}
 export {
   SortingAlgorithms
 }
